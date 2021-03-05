@@ -46,7 +46,7 @@ function App() {
     }
   }, []);
 
-  const newCurrentUser = (userData) => {
+  const nowCurrentUser = (userData) => {
     console.log(`>>>>> newCurrent is here.`)
     setCurrentUser(userData)
     setIsAuthenticated(true)
@@ -67,7 +67,7 @@ function App() {
     <div className="App">
       <h1>MERN Authentication</h1> 
       <Navbar handleLogout={handleLogout} isAuth={isAuthenticated}/>
-      <div classname="container mt-5">
+      <div className="container mt-5">
         <Switch>
           <Route path='/signup' component={Signup} />
           <Route 
