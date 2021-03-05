@@ -40,7 +40,7 @@ const Login = (props) => {
         })
     }
 
-    props.user ? <Redirect to="/profile" /> : <Redirect to="/login"/>
+    if(props.user) return <Redirect to="/profile" /> 
 
     return (
         <div className="row mt-4">
