@@ -16,18 +16,69 @@ import Navbar from './components/Navbar'
 import Profile from './components/Profile'
 import Welcome from './components/Welcome'
 
+const PrivateRoute = ({ component: Component, ...rest }) => {
+  let token = localStorage.getItem('jwtToken')
+  console.log(`>>>>> hitting a private route`)
+  return <Route {...rest} render={(props) => {
+    return token ? 
+    <Component {...rest}/> :
+    <Redirect to="/login/"/>}
+  }/>
+}
+
 function App() {
   // Set state values
  
+  const [currentUser, setCurrentUser] = useState('')
+  const [isAuthenticated, setIsAuthenticated] = useState(true)
+  
+
   useEffect(() => {
-    
+    let token;
+
+    if(!localStorage.getItem('jwtToken')){
+      setIsAuthenticated(false)
+      console.log(`>>>>> autheticated is set to false`)
+    } else {
+      token = jwt_decode(localStorage.getItem('jwtToken'))
+      setAuthToken(localStorage.getItem('jwtToken'))
+      setCurrentUser(token)
+    }
   }, []);
+
+  const newCurrentUser = (userData) => {
+    console.log(`>>>>> newCurrent is here.`)
+    setCurrentUser(userData)
+    setIsAuthenticated(true)
+    console.log(`>>>>> atuheticated is set to true`)
+  }
+
+  const handleLogout = () => {
+    if (localStorage.getItem('jwtToken')){
+      //remove token from localStorage
+      localStorage.removeItem('jwtToken')
+      setCurrentUser(null)
+      setIsAuthenticated(false)
+      console.log(`>>>>authenticated is set to false`)
+    }
+  }
 
   return (
     <div className="App">
       <h1>MERN Authentication</h1> 
-      <Profile />
-      
+      <Navbar handleLogout={handleLogout} isAuth={isAuthenticated}/>
+      <div classname="container mt-5">
+        <Switch>
+          <Route path='/signup' component={Signup} />
+          <Route 
+          path='/login'
+          render={(props) => <Login {...props} nowCurrentUser={nowCurrentUser} setIsAuthenticated={setIsAuthenticated} user={currentUser} />}/>
+          <PrivateRoute path='/profile' component={Profile} user={currentUser} handleLogout={handleLogout} />
+          <Route exact path='/' component={Welcome} />
+          <Route path='/about' component={About}/>
+        </Switch>
+      </div>
+      <Footer />
     </div>
   );
 }
